@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset name="ff6welt.png" tileheight="16" tilewidth="16">
+    <image height="256" source="res\BeispielProjekt\TileMap\overworld.png" width="480"/>
+    <clipping compression="gzip" encoding="base64" layer="default">H4sIAAAAAAAAAAvlYmAIxYIZKMSEzMNm52C2l1J3UmovITPJsZeYMKKnvbT2Ly3xQNlLTPjgE6eWvdjMo3U4kOpfcuKPlPxBa3tpHYZDMb8QWx7Qyv2U2gsAHpHCy4AHAAA=</clipping>
+    <connectedTiles>
+        <manner typ="0" x="10" y="6"/>
+        <manner typ="1" x="9" y="5"/>
+        <manner typ="2" x="11" y="5"/>
+        <manner typ="3" x="9" y="7"/>
+        <manner typ="4" x="11" y="7"/>
+        <manner typ="9" x="9" y="4"/>
+        <manner typ="10" x="10" y="5"/>
+        <manner typ="11" x="11" y="6"/>
+        <manner typ="12" x="10" y="7"/>
+        <manner typ="13" x="9" y="6"/>
+        <manner typ="24" x="11" y="4"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="9" y="0"/>
+        <manner typ="0" x="10" y="2"/>
+        <manner typ="1" x="9" y="1"/>
+        <manner typ="2" x="11" y="1"/>
+        <manner typ="3" x="9" y="3"/>
+        <manner typ="4" x="11" y="3"/>
+        <manner typ="9" x="11" y="0"/>
+        <manner typ="10" x="10" y="1"/>
+        <manner typ="11" x="11" y="2"/>
+        <manner typ="12" x="10" y="3"/>
+        <manner typ="13" x="9" y="2"/>
+        <manner typ="47" x="19" y="3"/>
+        <manner typ="48" x="20" y="3"/>
+        <manner typ="49" x="20" y="4"/>
+        <manner typ="50" x="19" y="4"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="7" y="10"/>
+        <manner typ="1" x="6" y="9"/>
+        <manner typ="2" x="8" y="9"/>
+        <manner typ="3" x="6" y="11"/>
+        <manner typ="4" x="8" y="11"/>
+        <manner typ="9" x="6" y="8"/>
+        <manner typ="10" x="7" y="9"/>
+        <manner typ="11" x="8" y="10"/>
+        <manner typ="12" x="7" y="11"/>
+        <manner typ="13" x="6" y="10"/>
+        <manner typ="14" x="8" y="8"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="7" y="14"/>
+        <manner typ="1" x="6" y="13"/>
+        <manner typ="2" x="8" y="13"/>
+        <manner typ="3" x="6" y="15"/>
+        <manner typ="4" x="8" y="15"/>
+        <manner typ="9" x="8" y="12"/>
+        <manner typ="10" x="7" y="13"/>
+        <manner typ="11" x="8" y="14"/>
+        <manner typ="12" x="7" y="15"/>
+        <manner typ="13" x="6" y="14"/>
+        <manner typ="15" x="7" y="12"/>
+        <manner typ="24" x="6" y="12"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="1" y="14"/>
+        <manner typ="1" x="0" y="13"/>
+        <manner typ="2" x="2" y="13"/>
+        <manner typ="3" x="0" y="15"/>
+        <manner typ="4" x="2" y="15"/>
+        <manner typ="9" x="0" y="12"/>
+        <manner typ="10" x="1" y="13"/>
+        <manner typ="11" x="2" y="14"/>
+        <manner typ="12" x="1" y="15"/>
+        <manner typ="13" x="0" y="14"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="1" y="9"/>
+        <manner typ="1" x="14" y="2"/>
+        <manner typ="2" x="15" y="2"/>
+        <manner typ="3" x="14" y="3"/>
+        <manner typ="4" x="15" y="3"/>
+        <manner typ="10" x="15" y="0"/>
+        <manner typ="11" x="17" y="1"/>
+        <manner typ="12" x="15" y="1"/>
+        <manner typ="13" x="17" y="0"/>
+        <manner typ="47" x="14" y="0"/>
+        <manner typ="48" x="16" y="0"/>
+        <manner typ="49" x="16" y="1"/>
+        <manner typ="50" x="14" y="1"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="22" y="4"/>
+        <manner typ="1" x="21" y="3"/>
+        <manner typ="2" x="23" y="3"/>
+        <manner typ="3" x="21" y="5"/>
+        <manner typ="4" x="23" y="5"/>
+        <manner typ="10" x="22" y="3"/>
+        <manner typ="11" x="23" y="4"/>
+        <manner typ="12" x="22" y="5"/>
+        <manner typ="13" x="21" y="4"/>
+        <manner typ="16" x="22" y="6"/>
+        <manner typ="17" x="21" y="2"/>
+        <manner typ="18" x="22" y="2"/>
+        <manner typ="19" x="23" y="2"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="0" x="12" y="12"/>
+        <manner typ="0" x="12" y="13"/>
+        <manner typ="0" x="13" y="13"/>
+        <manner typ="0" x="13" y="12"/>
+        <manner typ="0" x="15" y="12"/>
+        <manner typ="0" x="16" y="12"/>
+        <manner typ="0" x="16" y="13"/>
+        <manner typ="0" x="15" y="13"/>
+        <manner typ="0" x="15" y="14"/>
+        <manner typ="0" x="16" y="14"/>
+        <manner typ="1" x="12" y="8"/>
+        <manner typ="2" x="13" y="8"/>
+        <manner typ="3" x="12" y="9"/>
+        <manner typ="4" x="13" y="9"/>
+        <manner typ="10" x="12" y="10"/>
+        <manner typ="11" x="13" y="10"/>
+        <manner typ="12" x="13" y="11"/>
+        <manner typ="13" x="12" y="11"/>
+    </connectedTiles>
+    <connectedTiles>
+        <manner typ="15" x="16" y="15"/>
+        <manner typ="17" x="15" y="15"/>
+        <manner typ="19" x="17" y="15"/>
+    </connectedTiles>
+</tileset>

@@ -2,7 +2,6 @@ package toolbars;
 
 import database.game.DataBaseEditor;
 import editor.UndoUI;
-import editor.rpg.vector.VectorEditor;
 import editor.tileMap.TileMapEditor;
 import editor.tileSet.TileSetEditor;
 import gui.AAufbau;
@@ -50,7 +49,6 @@ public class Toolbar {
 		DialogSpriteEditor.init();
 		DialogRun.init();
 		DialogUndo.init();
-		DialogVector.init();
 		DialogTiledMap.init();
 		add(DialogAbout.name);
 		add(DialogDatei.name);
@@ -81,8 +79,6 @@ public class Toolbar {
 			remove(DialogTiledMap.name);
 		} else if (old instanceof DataBaseEditor) {
 			remove(DialogDatabase.name);
-		} else if (old instanceof VectorEditor) {
-			remove(DialogVector.name);
 		} else {
 		}
 		// Add
@@ -103,8 +99,6 @@ public class Toolbar {
 		} else if (panel instanceof DataBaseEditor) {
 			add(DialogDatabase.name);
 			DialogDatabase.update((DataBaseEditor) panel);
-		} else if (panel instanceof VectorEditor) {
-			add(DialogVector.name);
 		} else  {
 			panel = null;
 		}

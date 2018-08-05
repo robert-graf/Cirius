@@ -22,7 +22,6 @@ import javax.swing.filechooser.FileFilter;
 
 
 import editor.rpg.GUIMapEditStart;
-import editor.rpg.vector.VectorEditor;
 import editor.tileMap.TileMapEditor;
 import editor.tileSet.TileSetEditor;
 import interfaces.FileHolder;
@@ -117,12 +116,8 @@ public class Öffnen {
 				ex.printStackTrace();
 				//java -jar Hiero.jar -classpath slick.jar
 			}
-			// -Vector-
-		} else if (f.getName().toLowerCase().endsWith(".vec")) {
-			VectorEditor editor = new VectorEditor();
-			editor.setName("Vector");
-			AAufbau.addOpenFile(editor, editor);
-		} else if(f.getName().toLowerCase().endsWith(".pesx")){
+		
+		}else if(f.getName().toLowerCase().endsWith(".pesx")){
 			JOptionPane.showMessageDialog(null, "Particlesystemes are not Supportet");			
 		}
 		else if (!f.exists()) {

@@ -79,6 +79,9 @@ public abstract class XML {
 			
 			// write the content into xml file
 		    DOMSource source = new DOMSource(xmlDoc);
+		    if(!f.getParentFile().exists())f.getParentFile().mkdirs();
+		   
+		    f.createNewFile();
 		    FileWriter writer = new FileWriter(f);
 		    StreamResult result = new StreamResult(writer);
 

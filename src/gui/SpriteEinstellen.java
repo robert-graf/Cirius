@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.TextField;
 import java.awt.Toolkit;
@@ -51,6 +52,7 @@ import interfaces.Save;
 @SuppressWarnings("serial")
 public class SpriteEinstellen extends JTabbedPane implements Drop, Save,
 		MouseListener, FileHolder {
+	float scale = 1;
 	JPanel spriteEdit;
 	public SpriteXML data;
 	public SubToggleButton animieren;
@@ -58,7 +60,6 @@ public class SpriteEinstellen extends JTabbedPane implements Drop, Save,
 	String[] s = { "Animation", "Zeit", "Image", "X", "Y", "Breite", "Höhe",
 			"Wand" };
 	Object[][] o = new Object[0][s.length];
-	SpriteEinstellen selbstbezug;
 	JPanel Buttons = new JPanel();
 	public JList<Object> jlist = new JList<>();
 	File f;
@@ -67,7 +68,6 @@ public class SpriteEinstellen extends JTabbedPane implements Drop, Save,
 		this.f = f;
 		String[] s0 = { "                NOT JET STARTED             " };
 		jlist.setListData(s0);
-		selbstbezug = this;
 		// setTabPlacement(JTabbedPane.LEFT);
 		data = new SpriteXML(f, this);
 		spriteEdit = new JPanel();
@@ -333,8 +333,48 @@ public class SpriteEinstellen extends JTabbedPane implements Drop, Save,
 		image.setHorizontalAlignment(JLabel.CENTER);
 		updateImage();
 		JPanel p = new JPanel();
+		
 		p.setLayout(new BorderLayout());
-		p.add(new JScrollPane(image));
+		JScrollPane sc = new JScrollPane(image);
+				sc.addMouseListener(new MouseListener() {
+					
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mousePressed(MouseEvent ev) {
+						updateImage();
+						if(ev.getButton()==1){
+							if(scale<1)scale*=2;
+							else scale+=1;
+						}else if(ev.getButton()==3){
+							if(scale<=1)scale/=2;
+							else scale-=1;
+						}
+					}
+					
+					@Override
+					public void mouseExited(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+		p.add(sc);
 		// Unten
 		JPanel panel = new JPanel(new GridLayout(3, 1));
 		animieren = new SubToggleButton("Animieren",
@@ -388,7 +428,7 @@ public class SpriteEinstellen extends JTabbedPane implements Drop, Save,
 					|| s.getImagePfad().isEmpty()
 					|| !new File(s.getImagePfad()).exists()) {
 				image.setIcon(null);
-				image.setText("<html>Für diese Zahl gibt es keine Bild.<br> Fügen sie ein Bild hinzu. "
+				image.setText("<html>Für diesen Eintrag gibt es keine Bild.<br> Fügen sie ein Bild hinzu. "
 						+ "<br> Mit Drag´n´Drop können sie neue Bilder aus dem Baum hinzufügen.<html>");
 				return;
 			}
@@ -415,12 +455,16 @@ public class SpriteEinstellen extends JTabbedPane implements Drop, Save,
 						- s.getY());
 				updataTable();
 			}
-			image.setIcon(new ImageIcon(imageHash.get(s.getImagePfad())
-					.getSubimage(s.getX(), s.getY(), s.getWidht(),
-							s.getHeight())));
+			Image i = imageHash.get(s.getImagePfad()).getSubimage(s.getX(), s.getY(), s.getWidht(),s.getHeight());
+			if(scale != 1){
+				if(Math.min(s.getWidht()*scale, s.getHeight()*scale)<4){
+					scale*=2;
+				}
+				i = i.getScaledInstance((int)(s.getWidht()*scale), (int)(s.getHeight()*scale), Image.SCALE_FAST);
+			}
+			image.setIcon(new ImageIcon(i));
 			image.setText("");
 		} catch (Exception e) {
-			Toolkit.getDefaultToolkit().beep();
 			image.setText("Ein unbehandelter Fehler ist aufgetreten. "
 					+ "Geben sie keine \"Null\" oder \"Out of Range\" ein.");
 		}
