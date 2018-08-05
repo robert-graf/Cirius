@@ -1,0 +1,6 @@
+Author:		FatCow Web Hosting
+Webseite: 	http://www.fatcow.com/
+License: 		Creative Commons (Attribution 3.0 United States)
+Licensequelle:	http://creativecommons.org/licenses/by/3.0/us/
+
+Gilt für alle Order in diesem Ordner.
