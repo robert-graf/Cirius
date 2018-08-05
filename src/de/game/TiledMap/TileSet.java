@@ -1,38 +1,34 @@
-package editor.tileMap.objects;
-
-import java.awt.Image;
-import java.awt.image.BufferedImage;
+package de.game.TiledMap;
+import org.newdawn.slick.Image;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import editor.tileMap.Layer;
-import editor.tileSet.VerknuepfesTile;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+
+
+
 
 //import org.newdawn.slick.SpriteSheet;
 
@@ -42,7 +38,7 @@ import editor.tileSet.VerknuepfesTile;
  * @author kevin
  */
 public class TileSet {
-	/** name of the image */
+	/**name of the image*/
 	String ref;
 	/** The index of the tile set */
 	public int index;
@@ -70,9 +66,8 @@ public class TileSet {
 	protected int tileSpacing = 0;
 	/** The margin of the tileset */
 	protected int tileMargin = 0;
-
+	
 	protected short[][] Cliping;
-
 	/**
 	 * Create a tile set based on an XML definition
 	 * 
@@ -87,62 +82,49 @@ public class TileSet {
 	 *             Indicates a failure to parse the tileset
 	 */
 	public TileSet(File f, TiledMap map) {
-		if (map.getTileSetCount() != 0) {
-			firstGID = map.getTileSet(map.getTileSetCount() - 1).lastGID + 1;
-		} else
-			firstGID = 0;
-
+		firstGID = map.getTileSet(map.getTileSetCount()-1).lastGID+1;
 		String source = f.getPath();
 		try {
 			init(source, firstGID, null);
-		} catch (Exception e) {
+		} catch (SlickException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 	File f;
-	public ArrayList<VerknuepfesTile> qt;
-
-	public TileSet(Element element) {
+	public TileSet(Element element)
+			throws SlickException {
 		firstGID = Integer.parseInt(element.getAttribute("firstgid"));
 		String source = element.getAttribute("source");
-		init(source, firstGID, element);
+		init(source, firstGID,element);
 	}
-
 	public TileSet(File f2) {
 		try {
 			init(f2.getPath(), 0, null);
-		} catch (Exception e) {
+		} catch (SlickException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	public TileSet(File f, File imagefile, int w, int h) {
+	public TileSet(File f, File imagefile, int w,int h) throws SlickException {
 		this.f = f;
 		name = f.getName().replace(".tsx", "");
-
 		tileWidth = w;
 		tileHeight = h;
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(imagefile);
-			ref = f.getPath();
-		} catch (IOException e) {
-			System.out.println(imagefile);
-			e.printStackTrace();
-		}
-
+		//TODO
+		Image image = null;
+		image = new Image(ref);
+//			image =		ImageIO.read(new File(ref));
+		Cliping = new short[image.getWidth()/tileWidth][image.getHeight()/tileHeight];
+		defaultValueOfClipping();
 		// ();
 		setTileSetImage(image);
 	}
-
-	private void init(String source, int firstGID, Element element) {
+	private void init(String source, int firstGID,Element element) throws SlickException {
 		f = new File(source);
 		if ((source != null) && (!source.equals(""))) {
 			try {
-				InputStream in = new FileInputStream(f);
+				InputStream in = ResourceLoader.getResourceAsStream(source);
 				DocumentBuilder builder = DocumentBuilderFactory.newInstance()
 						.newDocumentBuilder();
 				Document doc = builder.parse(in);
@@ -151,14 +133,16 @@ public class TileSet {
 										// docElement.getElementsByTagName("tileset").item(0);
 				name = element.getAttribute("name");
 			} catch (Exception e) {
-				throw new IllegalArgumentException(
-						"Unable to load or parse sourced tileset: " + source);
+				Log.error(e);
+				throw new SlickException(
+						"Unable to load or parse sourced tileset: "
+								+ source);
 			}
 		}
 		String tileWidthString = element.getAttribute("tilewidth");
 		String tileHeightString = element.getAttribute("tileheight");
 		if (tileWidthString.length() == 0 || tileHeightString.length() == 0) {
-			throw new IllegalArgumentException(
+			throw new SlickException(
 					"TiledMap requires that the map be created with tilesets that use a "
 							+ "single image.  Check the WiKi for more complete information.");
 		}
@@ -186,30 +170,26 @@ public class TileSet {
 		//
 		// trans = new Color(c);
 		// }
-
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File(ref));
-		} catch (IOException e) {
-			System.out.println(ref);
-			e.printStackTrace();
-		}
-		// ();
-		setTileSetImage(image);
-
-		// Clipping
-		list = element.getElementsByTagName("clipping");
-		if (list.getLength() != 0) {
+		//TODO
+			Image image = null;
+			image = new Image(ref);
+//				image =		ImageIO.read(new File(ref));
+			Cliping = new short[image.getWidth()/tileWidth][image.getHeight()/tileHeight];
+			defaultValueOfClipping();
+			// ();
+			setTileSetImage(image);
+			
+		//Clipping
+			list = element.getElementsByTagName("clipping");
+			if(list.getLength() != 0){
 			Element dataNode = (Element) list.item(0);
 			String encoding = dataNode.getAttribute("encoding");
 			String compression = dataNode.getAttribute("compression");
 			if (encoding.equals("base64") && compression.equals("gzip")) {
 				try {
-					int height = new Integer(imageNode.getAttribute("height"))
-							/ tileHeight;
-					int width = new Integer(imageNode.getAttribute("width"))
-							/ tileWidth;
-
+					int height = new Integer(imageNode.getAttribute("height"))/tileHeight;
+					int width = new Integer(imageNode.getAttribute("width"))/tileWidth;
+					
 					Node cdata = dataNode.getFirstChild();
 					char[] enc = cdata.getNodeValue().trim().toCharArray();
 					byte[] dec = Layer.decodeBase64(enc);
@@ -228,13 +208,13 @@ public class TileSet {
 							tileId |= is.read() << 8;
 							tileId |= is.read() << 16;
 							tileId |= is.read() << 24;
-							if (x < Cliping.length && y < Cliping[x].length) {
+							if(x < Cliping.length && y < Cliping[x].length){
 								Cliping[x][y] = (short) tileId;
 							}
 						}
 					}
 				} catch (IOException e) {
-					// Log.error(e);
+//					Log.error(e);
 					try {
 						throw new Exception("Unable to decode base 64 block");
 					} catch (Exception e1) {
@@ -245,45 +225,14 @@ public class TileSet {
 			} else {
 				try {
 					throw new Exception("Unsupport tiled map type: " + encoding
-							+ "," + compression
-							+ " (only gzip base64 supported)");
+							+ "," + compression + " (only gzip base64 supported)");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		}
-		// VerknüpfesTile
-
-		qt = new ArrayList<>();
-		list = element.getElementsByTagName("connectedTiles");
-		for (int i = 0; i != list.getLength(); i += 1) {
-			NodeList tiles = ((Element) list.item(i))
-					.getElementsByTagName("manner");
-			VerknuepfesTile vt = new VerknuepfesTile(this);
-			qt.add(vt);
-			for (int n = 0; n != tiles.getLength(); n += 1) {
-				Element e = (Element) tiles.item(n);
-				vt.addTileData(Integer.parseInt(e.getAttribute("x")),
-						Integer.parseInt(e.getAttribute("y")),
-						Integer.parseInt(e.getAttribute("typ")));
-
 			}
-
-		}
-		// for(VerknüpfesTile vt : vts){
-		// Element xc = xmlDoc.createElement("connectedTiles");
-		//
-		// for(VerknüpfesTile.TileData d :vt.getCopyList()){
-		// Element tile = xmlDoc.createElement("manner");
-		// tile.setAttribute("typ", ""+d.getTyp());
-		// tile.setAttribute("x", ""+d.getX());
-		// tile.setAttribute("y", ""+d.getY());
-		// xc.appendChild(tile);
-		// }
-		// rootElement.appendChild(xc);
-		// }
-		// tile settings unused!
+//tile settings unused!
 
 		NodeList pElements = element.getElementsByTagName("tile");
 		for (int i = 0; i < pElements.getLength(); i++) {
@@ -308,6 +257,8 @@ public class TileSet {
 			props.put(new Integer(id), tileProps);
 		}
 	}
+
+	
 
 	/**
 	 * Get the width of each tile in this set
@@ -351,7 +302,7 @@ public class TileSet {
 	 * @param image
 	 *            The image to use for this tileset
 	 */
-	public void setTileSetImage(BufferedImage image) {
+	public void setTileSetImage(org.newdawn.slick.Image image) {
 		tiles = new SpriteSheet(image, tileWidth, tileHeight, tileSpacing,
 				tileMargin);
 		tilesAcross = tiles.getHorizontalCount();
@@ -365,23 +316,16 @@ public class TileSet {
 		}
 
 		lastGID = (tilesAcross * tilesDown) + firstGID - 1;
-		Cliping = new short[tiles.getHorizontalCount()][tiles
-				.getVerticalCount()];
-		defaultValueOfClipping();
 	}
-
-	public int getHorizontalCount() {
+	public int getHorizontalCount(){
 		return tiles.getHorizontalCount();
 	}
-
-	public int getVerticalCount() {
+	public int getVerticalCount(){
 		return tiles.getVerticalCount();
 	}
-
-	public Image getImage(int x, int y) {
+	public org.newdawn.slick.Image getImage(int x,int y){
 		return tiles.getSubImage(x, y);
 	}
-
 	/**
 	 * Get the properties for a specific tile in this tileset
 	 * 
@@ -391,7 +335,7 @@ public class TileSet {
 	 *         are defined
 	 */
 	public Properties getProperties(int globalID) {
-		return props.get(new Integer(globalID));
+		return (Properties) props.get(new Integer(globalID));
 	}
 
 	/**
@@ -415,9 +359,7 @@ public class TileSet {
 	public int getTileY(int id) {
 		return id / tilesAcross;
 	}
-	public int getTileID(int x, int y) {
-		return x+y*tilesAcross;
-	}
+
 	/**
 	 * Set the limit of the tiles in this set
 	 * 
@@ -438,189 +380,167 @@ public class TileSet {
 	public boolean contains(int gid) {
 		return (gid >= firstGID) && (gid <= lastGID);
 	}
-
 	@Override
 	public String toString() {
 		return name;
 	}
 
+
+
 	public File getFile() {
 		return f;
 	}
-
 	public static String fileEnding() {
 		return ".xts";
 	}
-
 	public SpriteSheet getImage() {
 		return tiles;
 	}
-
 	public short getTileCliping(int x, int y) {
 		return Cliping[x][y];
 	}
-
-	public void setTileCliping(int x, int y, short cont) {
-		Cliping[x][y] = cont;
+	public short getTileCliping(int id) {
+		int pos = id-firstGID;
+		return getTileCliping(pos%Cliping.length, pos/Cliping.length);
 	}
-
+	
+	
+	
+	
+	
+	public void setTileCliping(int x, int y, short cont) {
+		Cliping[x][y]=cont;
+	}
 	@SuppressWarnings("deprecation")
-	public void write(File f) {
-		this.f = f;
-		try {
-			/** START */
-			// DocumenBuilderFactory
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory
-					.newInstance();
-			// DocumentBuilder
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			// Document
-			Document xmlDoc = docBuilder.newDocument();
-			// TileSet bekommen
-			Element rootElement = xmlDoc.createElement("tileset");
-			/** CUSTOM */
-			rootElement.setAttribute("name", name);
-			rootElement.setAttribute("tilewidth", getTileWidth() + "");
-			rootElement.setAttribute("tileheight", getTileHeight() + "");
-			if (tileSpacing != 0) {
-				rootElement.setAttribute("spacing", tileSpacing + "");
+	public void write(File f2) {
+		try{
+		/** START */
+		// DocumenBuilderFactory
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory
+				.newInstance();
+		// DocumentBuilder
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		// Document
+		Document xmlDoc = docBuilder.newDocument();
+		// TileSet bekommen
+		Element rootElement = xmlDoc.createElement("tileset");
+		/** CUSTOM */
+		rootElement.setAttribute("name", name);
+		rootElement.setAttribute("tilewidth",getTileWidth()+"");
+		rootElement.setAttribute("tileheight",getTileHeight()+"");
+		if(tileSpacing != 0){
+			rootElement.setAttribute("spacing",tileSpacing+"");	
+		}
+		if(tileMargin != 0){
+		rootElement.setAttribute("margin",tileMargin+"");
+		}
+		Element image = xmlDoc.createElement("image");
+		image.setAttribute("source", ref);
+		image.setAttribute("width", getImage().getWidth()+"");
+		image.setAttribute("height", getImage().getHeight()+"");
+		rootElement.appendChild(image);
+		Element dataE = xmlDoc.createElement("clipping");
+		dataE.setAttribute("encoding", "base64");
+		dataE.setAttribute("compression", "gzip");
+		dataE.setAttribute("layer", "default");
+		int width = Cliping.length;
+		int height = Cliping[0].length;
+		byte[] c = new byte[width*height*4];
+		
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				
+				if(Cliping[x][y] == -1){
+					c[(x+y*width)*4] = 0;	
+					c[(x+y*width)*4+1] = 0;	
+					c[(x+y*width)*4+2] = 0;	
+					c[(x+y*width)*4+3] = 0;
+				}else{
+					int id = Cliping[x][y];
+					byte b1 = (byte)id;
+					byte b2 = (byte)(id >> 8);
+					byte b3 = (byte)(id >> 16);
+					byte b4 = (byte)(id >> 24);
+					c[(x+y*width)*4] = b1;	
+					c[(x+y*width)*4+1] = b2;	
+					c[(x+y*width)*4+2] = b3;	
+					c[(x+y*width)*4+3] = b4;	
+				}	
 			}
-			if (tileMargin != 0) {
-				rootElement.setAttribute("margin", tileMargin + "");
-			}
-			Element image = xmlDoc.createElement("image");
-			image.setAttribute("source", ref);
-			image.setAttribute("width", getImage().getHorizontalCount()
-					* getImage().getTileWight() + "");
-			image.setAttribute("height", getImage().getVerticalCount()
-					* getImage().getTileHeight() + "");
-			rootElement.appendChild(image);
-			Element dataE = xmlDoc.createElement("clipping");
-			dataE.setAttribute("encoding", "base64");
-			dataE.setAttribute("compression", "gzip");
-			dataE.setAttribute("layer", "default");
-			int width = Cliping.length;
-			int height = Cliping[0].length;
-			byte[] c = new byte[width * height * 4];
-
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-
-					if (Cliping[x][y] == -1) {
-						c[(x + y * width) * 4] = 0;
-						c[(x + y * width) * 4 + 1] = 0;
-						c[(x + y * width) * 4 + 2] = 0;
-						c[(x + y * width) * 4 + 3] = 0;
-					} else {
-						int id = Cliping[x][y];
-						byte b1 = (byte) id;
-						byte b2 = (byte) (id >> 8);
-						byte b3 = (byte) (id >> 16);
-						byte b4 = (byte) (id >> 24);
-						c[(x + y * width) * 4] = b1;
-						c[(x + y * width) * 4 + 1] = b2;
-						c[(x + y * width) * 4 + 2] = b3;
-						c[(x + y * width) * 4 + 3] = b4;
-					}
-				}
-			}
+		}
 			GZIPOutputStream GZIPstream;
 			try {
-				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				ByteOutputStream output = new ByteOutputStream();
 				GZIPstream = new GZIPOutputStream(output);
 				GZIPstream.write(c);
 				output.flush();
 				GZIPstream.close();
 				output.close();
-				dataE.setTextContent(javax.xml.bind.DatatypeConverter
-						.printBase64Binary(output.toByteArray()));
-				dataE.setAttribute("compression", "gzip");
+				dataE.setTextContent(javax.xml.bind.DatatypeConverter.printBase64Binary(output.toByteArray()));
+			dataE.setAttribute("compression", "gzip");
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			rootElement.appendChild(dataE);
-			// Nicht in Standart Datei
-			// Verknüpfte Tilse
-			ArrayList<VerknuepfesTile> vts = qt;
-			for (VerknuepfesTile vt : vts) {
-				Element xc = xmlDoc.createElement("connectedTiles");
-
-				for (VerknuepfesTile.TileData d : vt.getCopyList()) {
-					Element tile = xmlDoc.createElement("manner");
-					tile.setAttribute("typ", "" + d.getTyp());
-					tile.setAttribute("x", "" + d.getX());
-					tile.setAttribute("y", "" + d.getY());
-					xc.appendChild(tile);
-				}
-				rootElement.appendChild(xc);
-			}
-
-			// TODO Unsichtbarkeit wird nicht unterstützt!!!
-			// Color trans = null;
-			// String t = imageNode.getAttribute("trans");
-			// if ((t != null) && (t.length() > 0)) {
-			// int c = Integer.parseInt(t, 16);
-			//
-			// trans = new Color(c);
-			// }
-			// TODO eigenschaften werden nicht gespeichert / verwendet
-			// NodeList pElements = element.getElementsByTagName("tile");
-			// for (int i = 0; i < pElements.getLength(); i++) {
-			// Element tileElement = (Element) pElements.item(i);
-			//
-			// int id = Integer.parseInt(tileElement.getAttribute("id"));
-			// id += firstGID;
-			// Properties tileProps = new Properties();
-			//
-			// Element propsElement = (Element)
-			// tileElement.getElementsByTagName(
-			// "properties").item(0);
-			// NodeList properties =
-			// propsElement.getElementsByTagName("property");
-			// for (int p = 0; p < properties.getLength(); p++) {
-			// Element propElement = (Element) properties.item(p);
-			//
-			// String name = propElement.getAttribute("name");
-			// String value = propElement.getAttribute("value");
-			//
-			// tileProps.setProperty(name, value);
-			// }
-			//
-			// props.put(new Integer(id), tileProps);
-			// }
-			/** END */
-			// Document anhängen
-			xmlDoc.appendChild(rootElement);
-			// write the content into xml file
-		    DOMSource source = new DOMSource(xmlDoc);
-		    FileWriter writer = new FileWriter(f);
-		    StreamResult result = new StreamResult(writer);
-
-		    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		    Transformer transformer = transformerFactory.newTransformer();
-		    transformer.transform(source, result);
+		rootElement.appendChild(dataE);
+// TODO Unsichtbarkeit wird nicht unterstützt!!!
+// Color trans = null;
+// String t = imageNode.getAttribute("trans");
+// if ((t != null) && (t.length() > 0)) {
+// int c = Integer.parseInt(t, 16);
+//
+// trans = new Color(c);
+// }
+//TODO eigenschaften werden nicht gespeichert / verwendet
+//		NodeList pElements = element.getElementsByTagName("tile");
+//		for (int i = 0; i < pElements.getLength(); i++) {
+//			Element tileElement = (Element) pElements.item(i);
+//
+//			int id = Integer.parseInt(tileElement.getAttribute("id"));
+//			id += firstGID;
+//			Properties tileProps = new Properties();
+//
+//			Element propsElement = (Element) tileElement.getElementsByTagName(
+//					"properties").item(0);
+//			NodeList properties = propsElement.getElementsByTagName("property");
+//			for (int p = 0; p < properties.getLength(); p++) {
+//				Element propElement = (Element) properties.item(p);
+//
+//				String name = propElement.getAttribute("name");
+//				String value = propElement.getAttribute("value");
+//
+//				tileProps.setProperty(name, value);
+//			}
+//
+//			props.put(new Integer(id), tileProps);
+//		}
+		/** END */
+		// Document anhängen
+		xmlDoc.appendChild(rootElement);
+		// Set OutputFormen
+		OutputFormat out = new OutputFormat(xmlDoc);
+		out.setIndenting(true);
+		// Declare the file
+		File xmlFile = f;
+		// Declari the FileOutputStream
+		FileOutputStream outStream = new FileOutputStream(xmlFile);
+		// XMLSerializer
+		XMLSerializer serializer = new XMLSerializer(outStream, out);
+		// the secified Output Format
+		serializer.serialize(xmlDoc);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
-
-	private void defaultValueOfClipping() {
-		for (int x = 0; x != Cliping.length; x++) {
-			for (int y = 0; y != Cliping[x].length; y++) {
+	private void defaultValueOfClipping(){
+		for(int x = 0; x != Cliping.length;x++){
+			for(int y = 0; y != Cliping[x].length;y++){
 				Cliping[x][y] = 2560;
 			}
 		}
 	}
-
-	
 }

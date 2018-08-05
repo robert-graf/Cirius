@@ -1,6 +1,5 @@
 package editor.rpg.nexus;
 
-import de.rubberOo.javascript.gui.scriptPanel.ScriptPanel;
 import editor.css.CSSEditor;
 import gui.AAufbau;
 import img.Icons;
@@ -47,8 +46,8 @@ public enum NexusPanel implements ActionListener {
 		panel.setLayout(new BorderLayout());
 		DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Nexus", true);
 		tree = new JTree(node1);
-		final ScriptNode scirpt = new ScriptNode("Scripte", tree);
-		node1.add(scirpt);
+//		final ScriptNode scirpt = new ScriptNode("Scripte", tree);
+//		node1.add(scirpt);
 		css = new MainNodeTree<>("StyleSheet",CSSEditor.THAT.CSSCList, tree,
 				Icons.getImage("css", 16),Icons.getImage("css_go", 16));
 		node1.add(css);
@@ -59,11 +58,11 @@ public enum NexusPanel implements ActionListener {
 					public void valueChanged(TreeSelectionEvent e) {
 						TreePath p = e.getPath();
 						if (p.getPathCount() == 3) {
-							if (scirpt.equals(p.getPathComponent(1))) {
+//							if (scirpt.equals(p.getPathComponent(1))) {
 //								int i = ((MutableTreeNode) p.getPathComponent(1))
 //										.getIndex((TreeNode)p.getLastPathComponent());
-								ScriptPanel.THAT.getGlobal().setCurrendScript(p.getLastPathComponent().toString());
-							}
+//								ScriptPanel.THAT.getGlobal().setCurrendScript(p.getLastPathComponent().toString());
+//							}
 							if (css.equals(p.getPathComponent(1))) {
 								CSSEditor.THAT.setCssClasse(p.getLastPathComponent().toString());
 							}

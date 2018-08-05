@@ -3,14 +3,19 @@ package database;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 
 public abstract class XML {
 	private File file;
@@ -71,17 +76,15 @@ public abstract class XML {
 			/** END */
 			// Document anhängen
 			xmlDoc.appendChild(rootElement);
-			// Set OutputFormen
-			OutputFormat out = new OutputFormat(xmlDoc);
-			out.setIndenting(true);
-			// Declare the file
-			File xmlFile = f;
-			// Declari the FileOutputStream
-			FileOutputStream outStream = new FileOutputStream(xmlFile);
-			// XMLSerializer
-			XMLSerializer serializer = new XMLSerializer(outStream, out);
-			// the secified Output Format
-			serializer.serialize(xmlDoc);
+			
+			// write the content into xml file
+		    DOMSource source = new DOMSource(xmlDoc);
+		    FileWriter writer = new FileWriter(f);
+		    StreamResult result = new StreamResult(writer);
+
+		    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		    Transformer transformer = transformerFactory.newTransformer();
+		    transformer.transform(source, result);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

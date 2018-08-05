@@ -5,9 +5,6 @@ import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.HashMap;
-
-import org.newdawn.slick.SlickException;
-
 import basic.DPoint;
 import editor.DefaultEditorPanel.Matrix;
 import editor.rpg.TiledMapEditor.Teilbar;
@@ -99,7 +96,7 @@ public class CTileMap extends CImageObject implements Teilbar {
 				map = new TiledMap(new File(getSource()));
 				LayerContLine.setValue(map.getLayerCount());
 				hmTileMap.put(getSource(), map);
-			} catch (SlickException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -212,7 +209,7 @@ public class CTileMap extends CImageObject implements Teilbar {
 		try {
 			map = new TiledMap(new File(getSource()));
 			LayerContLine.setValue(map.getLayerCount());
-		} catch (SlickException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

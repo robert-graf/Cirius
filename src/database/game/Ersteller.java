@@ -4,15 +4,14 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
-public class Ersteller {
+public class Ersteller implements FileFilter {
 	public Ersteller(File f) {
-		File[] file = f.listFiles(new FileFilter() {
-			public boolean accept(File f) {
-				return f.isDirectory();
-			}
-		});
-
-		if (file[0].listFiles(data).length == 0) {
+		if(!f.exists()){
+			f.mkdirs();
+		}
+		File[] file = f.listFiles(this);
+		if(file.length == 0){}else
+		if (file[0].listFiles(this::acceptData).length == 0) {
 			try {
 				new File(file[0].getPath() + "/game.database").createNewFile();
 			} catch (IOException e) {
@@ -22,9 +21,12 @@ public class Ersteller {
 		}
 	}
 
-	FileFilter data = new FileFilter() {
-		public boolean accept(File f) {
-			return f.getName().equals("game.database");
-		}
-	};
+	
+	public boolean acceptData(File f) {
+		return f.getName().equals("game.database");
+	}
+	
+	public boolean accept(File f) {
+		return f.isDirectory();
+	}
 }

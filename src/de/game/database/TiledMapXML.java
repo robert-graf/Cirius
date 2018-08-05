@@ -1,15 +1,18 @@
-package database;
+package de.game.database;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import editor.tileMap.Layer;
-import editor.tileMap.objects.TileSet;
-import editor.tileMap.objects.TiledMap;
-import editor.tileMap.objects.TiledMap.SecretAccess;
+import de.game.TiledMap.Layer;
+import de.game.TiledMap.TileSet;
+import de.game.TiledMap.TiledMap;
+import de.game.TiledMap.TiledMap.SecretAccess;
+
 
 /**
  * @version 09.11.2013
@@ -29,7 +32,8 @@ public class TiledMapXML extends XML {
 
 			String orient = rootElement.getAttribute("orientation");
 			if (!orient.equals("orthogonal")) {
-				throw new IllegalArgumentException("Only orthogonal maps supported, found: " + orient);
+				throw new SlickException(
+						"Only orthogonal maps supported, found: " + orient);
 			}
 			access.setWidth(Integer.parseInt(rootElement.getAttribute("width")));
 			access.setHeight(Integer.parseInt(rootElement.getAttribute("height")));
@@ -94,9 +98,10 @@ public class TiledMapXML extends XML {
 //				objectGroups.add(objectGroup);
 //			}
 		} catch (Exception e) {
+			Log.error(e);
 			try {
-				throw new IllegalArgumentException("Failed to parse tilemap", e);
-			} catch (IllegalArgumentException e1) {
+				throw new SlickException("Failed to parse tilemap", e);
+			} catch (SlickException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}

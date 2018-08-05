@@ -141,6 +141,7 @@ public class TileSetEditor extends JPanel implements Save, ExtendsDefaultEditor 
 
 	@Override
 	public void save() {
+		if(qt!=null)
 		tileSet.qt = qt.getQuickTileList();
 		
 		tileSet.write(f);

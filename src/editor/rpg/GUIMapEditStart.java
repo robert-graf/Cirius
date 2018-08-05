@@ -8,7 +8,6 @@ import editor.DefaultEditorPanel.Matrix;
 import editor.Layer;
 import editor.DrawSettingsPanal;
 import editor.css.CSSEditor;
-import editor.rpg.script.ToolSetCurrendScript;
 import editor.tools.GreifTool;
 import editor.tools.SingleSelection;
 import gui.Drop;
@@ -43,7 +42,7 @@ public class GUIMapEditStart extends JPanel implements ExtendsDefaultEditor,
 		Matrix m = panel.m;
 		m.passiveTools.add(new SingleSelection());
 		m.passiveTools.add(new dataBaseTool(f.getParentFile()));
-		m.passiveTools.add(new ToolSetCurrendScript());
+//		m.passiveTools.add(new ToolSetCurrendScript());
 		m.addMatrixListener(this);
 		
 		xml = new MapXML(this);

@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 
 public class Icons {
 	private static HashMap<String, ImageIcon> imageIcon = new HashMap<>();
-	static public boolean debugg = true;
+	static public boolean debugg = false;
 	final static String ziel = "/used_icons/";
 	static {
 		if (new File("editor_lib/").exists()) {
