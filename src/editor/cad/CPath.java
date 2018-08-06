@@ -34,7 +34,12 @@ public class CPath extends CShape {
 	ArrayList<PrivatePoint> polygon = new ArrayList<>();
 	ArrayList<PolygonPoint> ppunkte = new ArrayList<>();
 	ArrayList<VerschiebeFragmentGriff> fragments = new ArrayList<>();
-	NumberLine<Integer> selectedPoint;
+	NumberLine<Integer> selectedPoint = new NumberLine<Integer>("Aktueller Punkt", 0, 0, 1, 1) {
+		@Override
+		public void valueChanges(Integer value) {
+			setSelectedPoint(value);
+		}
+	};;
 	JMenuItem currendExpensionMode;
 	boolean currendExpensionModeSyncronise = false;
 	ListLine<ObjectContainerForStringTyping<JMenuItem,Boolean>> expentionMode;
@@ -492,12 +497,7 @@ public class CPath extends CShape {
 
 	private void init() {
 
-		selectedPoint = new NumberLine<Integer>("Aktueller Punkt", 0, 0, 1, 1) {
-			@Override
-			public void valueChanges(Integer value) {
-				setSelectedPoint(value);
-			}
-		};
+		
 		addLine(selectedPoint);
 		addLine(new OneLine<Double>("X", null) {
 			@Override

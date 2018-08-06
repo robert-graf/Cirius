@@ -455,7 +455,7 @@ public class XMLCObject {
 			saveImageObject(rootObject, xmlDoc, (CImageObject) c);
 		}
 		if (saveXandY) {
-			if(c.getScript() != null || c.getScript().length() == 0){
+			if(c.getScript() != null && c.getScript().length() == 0){
 				Element script = xmlDoc.createElement("Script");
 				script.setTextContent(c.getScript());
 				rootObject.appendChild(script);
